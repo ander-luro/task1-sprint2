@@ -3,24 +3,21 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema pizzeria
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema pizzeria
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `pizzeria` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `pizzeria` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`Client`
+-- Table `pizzeria`.`Client`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Client` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Client` (
   `ClientID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NULL,
   `Surname` VARCHAR(45) NULL,
@@ -34,9 +31,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Shop`
+-- Table `pizzeria`.`Shop`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Shop` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Shop` (
   `ShopID` INT NOT NULL AUTO_INCREMENT,
   `Address` VARCHAR(45) NULL,
   `PostalCode` VARCHAR(10) NULL,
@@ -47,9 +44,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Order`
+-- Table `pizzeria`.`Order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Order` (
   `CommandID` INT NOT NULL AUTO_INCREMENT,
   `DateTime` DATETIME NULL,
   `OrderType` ENUM("pickup", "delivery") NULL,
@@ -61,21 +58,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
   INDEX `fk_Command_Shop1_idx` (`Shop_ShopID` ASC) VISIBLE,
   CONSTRAINT `fk_Command_Client`
     FOREIGN KEY (`Client_ClientID`)
-    REFERENCES `mydb`.`Client` (`ClientID`)
+    REFERENCES `pizzeria`.`Client` (`ClientID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Command_Shop1`
     FOREIGN KEY (`Shop_ShopID`)
-    REFERENCES `mydb`.`Shop` (`ShopID`)
+    REFERENCES `pizzeria`.`Shop` (`ShopID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Category`
+-- Table `pizzeria`.`Category`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Category` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Category` (
   `CategoryID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NULL,
   PRIMARY KEY (`CategoryID`))
@@ -83,9 +80,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Product`
+-- Table `pizzeria`.`Product`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Product` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Product` (
   `ProductID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NULL,
   `ProductType` ENUM("pizza", "hamburguer", "drinks") NULL,
@@ -97,16 +94,16 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Product` (
   INDEX `fk_Product_Category1_idx` (`Category_CategoryID` ASC) VISIBLE,
   CONSTRAINT `fk_Product_Category1`
     FOREIGN KEY (`Category_CategoryID`)
-    REFERENCES `mydb`.`Category` (`CategoryID`)
+    REFERENCES `pizzeria`.`Category` (`CategoryID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Employee`
+-- Table `pizzeria`.`Employee`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Employee` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Employee` (
   `EmployeeID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NULL,
   `Surname` VARCHAR(45) NULL,
@@ -118,16 +115,16 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Employee` (
   INDEX `fk_Employee_Shop1_idx` (`Shop_ShopID` ASC) VISIBLE,
   CONSTRAINT `fk_Employee_Shop1`
     FOREIGN KEY (`Shop_ShopID`)
-    REFERENCES `mydb`.`Shop` (`ShopID`)
+    REFERENCES `pizzeria`.`Shop` (`ShopID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Deliver`
+-- Table `pizzeria`.`Deliver`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Deliver` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Deliver` (
   `DeliverID` INT NOT NULL AUTO_INCREMENT,
   `DeliverDateTime` DATETIME NULL,
   `Command_CommandID` INT NOT NULL,
@@ -137,21 +134,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Deliver` (
   INDEX `fk_Delivers_Employee1_idx` (`Employee_EmployeeID` ASC) VISIBLE,
   CONSTRAINT `fk_Delivers_Command1`
     FOREIGN KEY (`Command_CommandID`)
-    REFERENCES `mydb`.`Order` (`CommandID`)
+    REFERENCES `pizzeria`.`Order` (`CommandID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Delivers_Employee1`
     FOREIGN KEY (`Employee_EmployeeID`)
-    REFERENCES `mydb`.`Employee` (`EmployeeID`)
+    REFERENCES `pizzeria`.`Employee` (`EmployeeID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Order_has_Product`
+-- Table `pizzeria`.`Order_has_Product`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Order_has_Product` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`Order_has_Product` (
   `Command_CommandID` INT NOT NULL,
   `Product_ProductID` INT NOT NULL,
   `Quantity` INT NULL,
@@ -160,17 +157,14 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Order_has_Product` (
   INDEX `fk_Command_has_Product_Command1_idx` (`Command_CommandID` ASC) VISIBLE,
   CONSTRAINT `fk_Command_has_Product_Command1`
     FOREIGN KEY (`Command_CommandID`)
-    REFERENCES `mydb`.`Order` (`CommandID`)
+    REFERENCES `pizzeria`.`Order` (`CommandID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Command_has_Product_Product1`
     FOREIGN KEY (`Product_ProductID`)
-    REFERENCES `mydb`.`Product` (`ProductID`)
+    REFERENCES `pizzeria`.`Product` (`ProductID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
